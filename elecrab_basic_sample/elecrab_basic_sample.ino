@@ -3,8 +3,8 @@
     @file elecrab_basic_sample.ino
     @brief えれくらぶ動作サンプル
         赤外線リモコン受信モジュール(Vout)に接続ピン番号・・・2番
-    赤外線リモコン受信モジュール(GND )に接続ピン番号・・・3番
-    赤外線リモコン受信モジュール(VCC )に接続ピン番号・・・4番
+        赤外線リモコン受信モジュール(GND )に接続ピン番号・・・3番
+        赤外線リモコン受信モジュール(VCC )に接続ピン番号・・・4番
         左右に動くサーボモータのPIN番号(上側のサーボモータ)・・・5番
         上下に動くサーボモータのPIN番号(下側のサーボモータ)・・・6番
         シリアル（シリアルモニタなど）からコマンドを送信する際はLE、LFを付けて下さい
@@ -27,14 +27,14 @@
 // 歩く速度のウェイト(μs)(数値が小さいほど早く歩きます)
 #define SPEED  200
 
-IRControlReceiver ir(2);                                          // 赤外線リモコン受信モジュール(Vout)に接続するArduino側のピン番号は2番
+IRControlReceiver ir(2);                                            // 赤外線リモコン受信モジュール(Vout)に接続するArduino側のピン番号は2番
 Servo Servo1;                                                       // 左右に動く足の角度(上側のサーボモータ)
 Servo Servo2;                                                       // 上下に動く足の角度(下側のサーボモータ)
 
-int Servo1_val[3] = {45,  95, 145};                                  // 左右に動く足の角度(上側のサーボモータ)
-int Servo2_val[3] = {50,  80, 110};                                  // 上下に動く足の角度(下側のサーボモータ)
+int Servo1_val[3] = {45,  95, 145};                                 // 左右に動く足の角度(上側のサーボモータ)
+int Servo2_val[3] = {50,  80, 110};                                 // 上下に動く足の角度(下側のサーボモータ)
 
-unsigned char ir_dat[IR_DATA_MAX_BYTE_SIZE];                         // 赤外線リモコンデータの受信領域
+unsigned char ir_dat[IR_DATA_MAX_BYTE_SIZE];                        // 赤外線リモコンデータの受信領域
 
 // 動作用赤外線リモコンデータ領域
 unsigned char motiondata[6][IR_DATA_MAX_BYTE_SIZE] = {
