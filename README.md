@@ -2,7 +2,7 @@
 
 This Sample is to control the " elecrab ".
 
-![Elecrab](img/elecrab.jpg)
+![Elecrab](https://github.com/KeiTakagi/elecrab/tree/elecrab/img/elecrab.jpg "Elecrab")
 
 ##Version 0.1
 
@@ -14,4 +14,5 @@ I am controlling the crab type robot " elecrab " use this library .
 
 ##Circuit diagram
 
-![Elecrab Circuit diagram](img/elecrab001.png)
+![Elecrab Circuit diagram](https://github.com/KeiTakagi/elecrab/tree/elecrab/img/elecrab001.png "Elecrab Circuit diagram")
+
