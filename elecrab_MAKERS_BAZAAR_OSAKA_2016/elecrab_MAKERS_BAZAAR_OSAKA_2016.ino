@@ -9,7 +9,7 @@
         上下に動くサーボモータのPIN番号(下側のサーボモータ)・・・6番
         シリアル（シリアルモニタなど）からコマンドを送信する際はLE、LFを付けて下さい
     @author Kei Takagi
-    @date 2016.7.7
+    @date 2016.7.13
 
     Copyright (c) 2016 Kei Takagi
     Released under the MIT license
@@ -19,6 +19,9 @@
 
 #include <IRControlReceiver.h>
 #include <Servo.h>
+
+// ↓コメントを外すとシリアルモニタに赤外線のデータが表示されます
+//#define DEBUG
 
 // 左右に動くサーボモータのPIN番号(上側のサーボモータ)
 #define SERVO1 5
@@ -44,13 +47,21 @@ unsigned char motiondata[7][IR_DATA_MAX_BYTE_SIZE] = {
   0x00, 0xFF, 0x52, 0xAD, 0x00, 0x00, 0x00, 0x00, // 9:右斜め後ろ
   0x00, 0xFF, 0x4A, 0xB5, 0x00, 0x00, 0x00, 0x00, // 8:後ろ
   0x00, 0xFF, 0x42, 0xBD, 0x00, 0x00, 0x00, 0x00, // 7:左斜め後ろ
-  0x00, 0xFF, 0x30, 0xCF, 0x00, 0x00, 0x00, 0x00 // 1:左斜め
+  0x00, 0xFF, 0x30, 0xCF, 0x00, 0x00, 0x00, 0x00  // 1:左斜め
 };
 
 // ======================
 // setup()関数はスケッチがスタートしたときに1度だけ呼び出されます
 // ======================
 void setup() {
+
+#ifdef DEBUG
+  // ------------------------------------
+  // パソコンとシリアル通信するための設定
+  // ------------------------------------
+  Serial.begin(9600) ;     // シリアル通信設定：9600bps
+#endif
+
   // ------------------------------------
   // 赤外線リモコン受信モジュール設定
   // ------------------------------------
@@ -63,13 +74,16 @@ void setup() {
   // ------------------------------------
   // えれくらぶの動作に関係する設定
   // ------------------------------------
-  Servo1.attach(SERVO1);    // サーボモータの初期設定
-  Servo2.attach(SERVO2);    // サーボモータの初期設定
-
-  Serial.begin(9600) ;     // シリアル通信設定：9600bps
-
   InitialPosition();        // 初期位置
-  delay(5000);              // 5秒とめる
+
+  for (int i = 0 ; i < 5 ; i++) {
+    // 足の角度を補正するため5秒とめる
+    // 13番ピンのLEDをチカチカさせる
+    digitalWrite(13, HIGH);
+    delay(500);
+    digitalWrite(13, LOW);
+    delay(500);
+  }
 
 }
 
@@ -85,7 +99,11 @@ void loop() {
   // ------------------------------------
   ret = ir.receive(ir_dat);
   if (ret > 0) {
+    if (memcmp(ir_dat, motiondata[0], IR_DATA_MAX_BYTE_SIZE) == 0)return;                 // 何もしない
+
     digitalWrite(13, HIGH);
+
+#ifdef DEBUG
     //受信した赤外線リモコンデータを16進数で表示
     Serial.print("IR:HEX[");
     for ( i = 0; i < IRControlReceiver::IR_DATA_MAX_BYTE; i++) {
@@ -93,15 +111,23 @@ void loop() {
       Serial.print(*(ir_dat + i), HEX);
     }
     Serial.println("]");
+#endif
 
-    if (memcmp(ir_dat, motiondata[0], IR_DATA_MAX_BYTE_SIZE) == 0)return;                 // 何もしない
-    else if (memcmp(ir_dat, motiondata[1], IR_DATA_MAX_BYTE_SIZE) == 0)front();           // 前にすすむ
+    // 赤外線センサーがサーボモータ制御信号のノイズをひろい誤動作します
+    // サーボモータを動かす時だけサーボモータの設定を毎回行います
+
+    Servo1.attach(SERVO1);       // サーボモータのピン設定
+    Servo2.attach(SERVO2);       // サーボモータのピン設定
+
+    if (memcmp(ir_dat, motiondata[1], IR_DATA_MAX_BYTE_SIZE) == 0)front();                // 前にすすむ
     else if (memcmp(ir_dat, motiondata[2], IR_DATA_MAX_BYTE_SIZE) == 0)rightOblique();    // 右斜めにすすむ
     else if (memcmp(ir_dat, motiondata[3], IR_DATA_MAX_BYTE_SIZE) == 0)rightObliqueBack();// 右斜め後ろにすすむ
     else if (memcmp(ir_dat, motiondata[4], IR_DATA_MAX_BYTE_SIZE) == 0)back();            // 後ろにすすむ
     else if (memcmp(ir_dat, motiondata[5], IR_DATA_MAX_BYTE_SIZE) == 0)leftObliqueBack(); // 左斜め後ろにすすむ
     else if (memcmp(ir_dat, motiondata[6], IR_DATA_MAX_BYTE_SIZE) == 0)leftOblique();     // 左斜めにすすむ
-    else InitialPosition();                                                               // 初期位置
+
+    Servo1.detach();             // サーボモータのピン解放
+    Servo2.detach();             // サーボモータのピン解放
 
     digitalWrite(13, LOW);
   }
@@ -126,15 +152,23 @@ int memcmp(const void *s1, const void *s2, size_t n)
 // 初期位置
 // ======================
 void InitialPosition() {
+  Servo1.attach(SERVO1);       // サーボモータのピン設定
+  Servo2.attach(SERVO2);       // サーボモータのピン設定
+
   Servo1.write(Servo1_val[1]); // 左右に動くサーボモータの制御
   Servo2.write(Servo2_val[1]); // 上下に動くサーボモータの制御
+
+  Servo1.detach();             // サーボモータのピン解放
+  Servo2.detach();             // サーボモータのピン解放
 }
 
 // ======================
 // 真っ直ぐ進む
 // ======================
 void front() {
+#ifdef DEBUG
   Serial.println("front");
+#endif
   rightOblique();
   leftOblique();
 }
@@ -143,7 +177,9 @@ void front() {
 // 後ろに進む
 // ======================
 void back() {
+#ifdef DEBUG
   Serial.println("back");
+#endif
   rightObliqueBack();
   leftObliqueBack();
 }
@@ -152,7 +188,9 @@ void back() {
 // 右斜めに進む
 // ======================
 void rightOblique() {
+#ifdef DEBUG
   Serial.println("rightOblique");
+#endif
   walk(1, 0);
   walk(0, 0);
   walk(0, 2);
@@ -164,7 +202,9 @@ void rightOblique() {
 // 右斜め後ろに進む
 // ======================
 void rightObliqueBack() {
+#ifdef DEBUG
   Serial.println("rightObliqueBack");
+#endif
   walk(1, 2);
   walk(0, 2);
   walk(0, 0);
@@ -176,7 +216,9 @@ void rightObliqueBack() {
 // 左斜めに進む
 // ======================
 void leftOblique() {
+#ifdef DEBUG
   Serial.println("leftOblique");
+#endif
   walk(1, 2);
   walk(2, 2);
   walk(2, 0);
@@ -188,7 +230,9 @@ void leftOblique() {
 // 左斜め後ろに進む
 // ======================
 void leftObliqueBack() {
+#ifdef DEBUG
   Serial.println("leftObliqueBack");
+#endif
   walk(1, 0);
   walk(2, 0);
   walk(2, 2);

@@ -9,7 +9,7 @@
         上下に動くサーボモータのPIN番号(下側のサーボモータ)・・・6番
         シリアル（シリアルモニタなど）からコマンドを送信する際はLE、LFを付けて下さい
     @author Kei Takagi
-    @date 2016.2.19
+    @date 2016.7.13
 
     Copyright (c) 2016 Kei Takagi
     Released under the MIT license
@@ -20,6 +20,9 @@
 #include <EEPROM.h>
 #include <IRControlReceiver.h>
 #include <Servo.h>
+
+// ↓コメントを外すとシリアルモニタに赤外線のデータが表示されます
+//#define DEBUG
 
 // 左右に動くサーボモータのPIN番号(上側のサーボモータ)
 #define SERVO1 5
@@ -80,7 +83,7 @@ void setup() {
   // ------------------------------------
   // パソコンとシリアル通信するための設定
   // ------------------------------------
-  Serial.begin(9600) ;
+  Serial.begin(9600) ;     // シリアル通信設定：9600bps
 
   // ------------------------------------
   // 赤外線リモコン受信モジュール設定
@@ -90,13 +93,8 @@ void setup() {
   pinMode(4, OUTPUT);        // 赤外線リモコン受信モジュール PIN4 VCC
   digitalWrite(4, HIGH);
   pinMode(13, OUTPUT);       // PIN13 LED
-  for (i = 0; i < IR_DATA_MAX_BYTE_SIZE; i++)ir_zero[i] = 0x00; //領域クリア
 
-  // ------------------------------------
-  // えれくらぶの動作に関係する設定
-  // ------------------------------------
-  Servo1.attach(SERVO1);    // サーボモータの初期設定
-  Servo2.attach(SERVO2);    // サーボモータの初期設定
+  for (i = 0; i < IR_DATA_MAX_BYTE_SIZE; i++)ir_zero[i] = 0x00; //領域クリア
 
   // ------------------------------------
   // EPROMからの設定読込
@@ -133,12 +131,12 @@ void setup() {
   Servo2_val[2] = motiondata.srv2[2];
 
   // ------------------------------------
-  // 初期位置
+  // えれくらぶの動作に関係する設定
   // ------------------------------------
   InitialPosition();
 
   // ------------------------------------
-  // リモコン設定
+  // リモコンの値の設定
   // ------------------------------------
   iesetting();
 }
@@ -147,33 +145,46 @@ void setup() {
 // loop()関数は繰り返し実行されます。
 // ======================
 void loop() {
+  int i = 0;
   int ret = 0;  // 復帰値
-  int i;
+
+  // ------------------------------------
   // 赤外線リモコンデータの受信
+  // ------------------------------------
   ret = ir.receive(ir_dat);
   if (ret > 0) {
-    if (memcmp( ir_zero, ir_dat, IR_DATA_MAX_BYTE_SIZE ) == 0 ) {
-      // NO DATA
+
+    if (memcmp(ir_dat, ir_zero, IR_DATA_MAX_BYTE_SIZE) == 0)return;                              // 何もしない
+
+    digitalWrite(13, HIGH);
+
+#ifdef DEBUG
+    //受信した赤外線リモコンデータを16進数で表示
+    Serial.print("IR:HEX[");
+    for ( i = 0; i < IRControlReceiver::IR_DATA_MAX_BYTE; i++) {
+      if ( *(ir_dat + i) <= 0x0F )Serial.print('0');
+      Serial.print(*(ir_dat + i), HEX);
     }
-    else if (memcmp(ir_dat, motiondata.ir_dat[0], IR_DATA_MAX_BYTE_SIZE) == 0) {
-      front();              // 前にすすむ
-    }
-    else if (memcmp(ir_dat, motiondata.ir_dat[1], IR_DATA_MAX_BYTE_SIZE) == 0) {
-      rightOblique();       // 右斜めにすすむ
-    }
-    else if (memcmp(ir_dat, motiondata.ir_dat[2], IR_DATA_MAX_BYTE_SIZE) == 0) {
-      rightObliqueBack();   // 右斜め後ろにすすむ
-    }
-    else if (memcmp(ir_dat, motiondata.ir_dat[3], IR_DATA_MAX_BYTE_SIZE) == 0) {
-      back();               // 後ろにすすむ
-    }
-    else if (memcmp(ir_dat, motiondata.ir_dat[4], IR_DATA_MAX_BYTE_SIZE) == 0) {
-      leftObliqueBack();    // 左斜め後ろにすすむ
-    }
-    else if (memcmp(ir_dat, motiondata.ir_dat[5], IR_DATA_MAX_BYTE_SIZE) == 0) {
-      leftOblique();        // 左斜めにすすむ
-    }
-    else InitialPosition(); // 初期位置
+    Serial.println("]");
+#endif
+
+    // 赤外線センサーがサーボモータ制御信号のノイズをひろい誤動作します
+    // サーボモータを動かす時だけサーボモータの設定を毎回行います
+
+    Servo1.attach(SERVO1);       // サーボモータのピン設定
+    Servo2.attach(SERVO2);       // サーボモータのピン設定
+
+    if (memcmp(ir_dat, motiondata.ir_dat[0], IR_DATA_MAX_BYTE_SIZE) == 0)front();                // 前にすすむ
+    else if (memcmp(ir_dat, motiondata.ir_dat[1], IR_DATA_MAX_BYTE_SIZE) == 0)rightOblique();    // 右斜めにすすむ
+    else if (memcmp(ir_dat, motiondata.ir_dat[2], IR_DATA_MAX_BYTE_SIZE) == 0)rightObliqueBack();// 右斜め後ろにすすむ
+    else if (memcmp(ir_dat, motiondata.ir_dat[3], IR_DATA_MAX_BYTE_SIZE) == 0)back();            // 後ろにすすむ
+    else if (memcmp(ir_dat, motiondata.ir_dat[4], IR_DATA_MAX_BYTE_SIZE) == 0)leftObliqueBack(); // 左斜め後ろにすすむ
+    else if (memcmp(ir_dat, motiondata.ir_dat[5], IR_DATA_MAX_BYTE_SIZE) == 0)leftOblique();     // 左斜めにすすむ
+
+    Servo1.detach();             // サーボモータのピン解放
+    Servo2.detach();             // サーボモータのピン解放
+
+    digitalWrite(13, LOW);
   }
 }
 
@@ -415,8 +426,14 @@ int memcmp(const void *s1, const void *s2, size_t n)
 // 初期位置
 // ======================
 void InitialPosition() {
+  Servo1.attach(SERVO1);       // サーボモータのピン設定
+  Servo2.attach(SERVO2);       // サーボモータのピン設定
+
   Servo1.write(Servo1_val[1]); // 左右に動くサーボモータの制御
   Servo2.write(Servo2_val[1]); // 上下に動くサーボモータの制御
+
+  Servo1.detach();             // サーボモータのピン解放
+  Servo2.detach();             // サーボモータのピン解放
 }
 
 // ======================
@@ -483,7 +500,7 @@ void leftObliqueBack() {
 // サーボモータの角度を変える
 // ======================
 void walk(int servo1Val, int servo2Val) {
-  Servo1.write(motiondata.srv1[servo1Val]); // 左右に動くサーボモータの制御
-  Servo2.write(motiondata.srv2[servo2Val]); // 上下に動くサーボモータの制御
+  Servo1.write(Servo1_val[servo1Val]); // 左右に動くサーボモータの制御
+  Servo2.write(Servo2_val[servo2Val]); // 上下に動くサーボモータの制御
   delay(SPEED);
 }

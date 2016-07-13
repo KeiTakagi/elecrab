@@ -1,18 +1,36 @@
-# Elecrab sample program for Arduino
+えれくらぶ サンプルプログラム for Arduino
+======================
+「えれくらぶ」は、エルチカの次の一歩が踏み出せない悩みを解決するために製作しました。
+サーボモータ２個とマイコンボードで、前後、左前後、右前後の６方位に動かすことができます。
 
-This Sample is to control the " elecrab ".
+##
+[![えれくらぶ](http://img.youtube.com/vi/CPvXvORFGMQ/0.jpg)](https://www.youtube.com/watch?v=CPvXvORFGMQ)
 
-![Elecrab](https://github.com/KeiTakagi/elecrab/tree/elecrab/img/elecrab.jpg "Elecrab")
+ 
+えれくらぶの材料・組立
+----------------------
+  [えれくらぶの材料・組立](http://www64.atwiki.jp/elecra296/pages/29.html "えれくら")
 
-##Version 0.1
+ 
+必要なライブラリ
+----------------
 
-##Example of use
+  [赤外線リモコン受信ライブラリ](https://github.com/KeiTakagi/IRControlReceiver/ "IRControlReceiver")
+ 
+   Windowsの場合[My Documents]/Arduino/libraries/の下に「IRControlReceiver」フォルダごとコピーしてください。
 
-I am controlling the crab type robot " elecrab " use this library .
-
-[![Alt text for your video](http://img.youtube.com/vi/CPvXvORFGMQ/0.jpg)](https://www.youtube.com/watch?v=CPvXvORFGMQ)
+ 
+関連情報
+--------
 
 ##Circuit diagram
 
 ![Elecrab Circuit diagram](https://github.com/KeiTakagi/elecrab/tree/elecrab/img/elecrab001.png "Elecrab Circuit diagram")
+
+ 
+ライセンス
+----------
+Copyright &copy; 2016 Kei Takagi
+Distributed under the [MIT License][mit].
+[MIT]: http://www.opensource.org/licenses/mit-license.php
 
