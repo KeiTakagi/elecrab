@@ -1,6 +1,6 @@
 えれくらぶ サンプルプログラム for Arduino
 ======================
-「えれくらぶ」は、エルチカの次の一歩が踏み出せない悩みを解決するために製作しました。 
+「えれくらぶ」は、エルチカの次の一歩が踏み出せない悩みを解決するために製作しました。  
 サーボモータ２個とマイコンボードで、前後、左前後、右前後の６方位に動かすことができます。 
 赤外線リモコンを使って操作することもできます。
  
@@ -28,6 +28,6 @@
 ----------
 Copyright &copy; 2016 Kei Takagi  
 
-Distributed under the [MIT License][mit]. 
+Distributed under the [MIT License][mit].
 [MIT]: http://www.opensource.org/licenses/mit-license.php
 
