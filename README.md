@@ -9,23 +9,21 @@
  
 えれくらぶの材料・組立
 ----------------------
-  [えれくらぶの材料・組立](http://www64.atwiki.jp/elecra296/pages/29.html "えれくら")
+  [http://www64.atwiki.jp/elecra296/pages/29.html ](http://www64.atwiki.jp/elecra296/pages/29.html "えれくら")
 
  
 必要なライブラリ
 ----------------
 
-  [赤外線リモコン受信ライブラリ](https://github.com/KeiTakagi/IRControlReceiver/ "IRControlReceiver")
+  [https://github.com/KeiTakagi/IRControlReceiver](https://github.com/KeiTakagi/IRControlReceiver/ "IRControlReceiver")
  
    Windowsの場合[My Documents]/Arduino/libraries/の下に「IRControlReceiver」フォルダごとコピーしてください。
 
  
-関連情報
---------
+Circuit diagram
+---------------
 
-##Circuit diagram
-
-![Elecrab Circuit diagram](https://github.com/KeiTakagi/elecrab/tree/elecrab/img/elecrab001.png "Elecrab Circuit diagram")
+ [Elecrab Circuit diagram](https://github.com/KeiTakagi/elecrab/tree/elecrab/img/elecrab001.png "Elecrab Circuit diagram")
 
  
 ライセンス
