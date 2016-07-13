@@ -2,7 +2,8 @@
 ======================
 「えれくらぶ」は、エルチカの次の一歩が踏み出せない悩みを解決するために製作しました。  
 サーボモータ２個とマイコンボードで、前後、左前後、右前後の６方位に動かすことができます。  
-プログラムを組んだり、赤外線リモコンを使って操作することもできます。
+
+プログラムを組んだり、赤外線リモコンを使って楽しんでください。
  
 ##
 [![えれくらぶ](http://img.youtube.com/vi/CPvXvORFGMQ/0.jpg)](https://www.youtube.com/watch?v=CPvXvORFGMQ)
@@ -15,7 +16,7 @@
   
 必要なライブラリ
 ----------------
-[https://github.com/KeiTakagi/IRControlReceiver](https://github.com/KeiTakagi/IRControlReceiver/ "IRControlReceiver")
+[https://github.com/KeiTakagi/IRControlReceiver](https://github.com/KeiTakagi/IRControlReceiver/ "IRControlReceiver")  
 ※Windowsの場合[My Documents]/Arduino/libraries/の下に「IRControlReceiver」フォルダごとコピーしてください。
 
   
