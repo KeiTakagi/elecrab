@@ -28,7 +28,8 @@ Circuit diagram
  
 ƒ‰ƒCƒZƒ“ƒX
 ----------
-Copyright &copy; 2016 Kei Takagi
-Distributed under the [MIT License][mit].
+Copyright &copy; 2016 Kei Takagi  
+
+Distributed under the [MIT License][mit].  
 [MIT]: http://www.opensource.org/licenses/mit-license.php
 
